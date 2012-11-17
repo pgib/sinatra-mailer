@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'sinatra-mailer'
-  s.version     = '0.1.0'
+  s.version     = '0.1.1'
   s.date        = '2012-11-16'
   s.summary     = "Simple mailer class for Sinatra."
   s.description = "A port of Merb::Mailer"
