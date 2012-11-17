@@ -15,20 +15,20 @@ module Sinatra
   #
   #   Sinatra::Mailer.config = {
   #     :host   => 'smtp.yourserver.com',
-  #     :port   => '25',              
+  #     :port   => '25',
   #     :user   => 'user',
   #     :pass   => 'pass',
   #     :auth   => :plain # :plain, :login, :cram_md5, the default is no auth
-  #     :domain => "localhost.localdomain" # the HELO domain provided by the client to the server 
+  #     :domain => "localhost.localdomain" # the HELO domain provided by the client to the server
   #   }
-  # 
- 	#   or 
- 	# 
+  #
+ 	#   or
+ 	#
  	#   Sinatra::Mailer.config = {:sendmail_path => '/somewhere/odd'}
   #   Sinatra::Mailer.delivery_method = :sendmail
   #
   # From your event handlers then, you can just call the 'email' method to deliver an email:
-  # 
+  #
   #   email :to => 'foo@bar.com',
   #         :from => 'bar@foo.com',
   #         :subject => 'Welcome to whatever!',
@@ -38,7 +38,7 @@ module Sinatra
     class << self
       attr_accessor :config, :delivery_method
     end
-    
+
     def email(mail_options={})
       Email.new(mail_options).deliver!
     end
@@ -48,16 +48,16 @@ module Sinatra
 
       # Sends the mail using sendmail.
       def sendmail
-        sendmail = IO.popen("#{config[:sendmail_path]} #{@mail.to}", 'w+') 
+        sendmail = IO.popen("#{config[:sendmail_path]} #{@mail.to}", 'w+')
         sendmail.puts @mail.to_s
         sendmail.close
       end
 
       # Sends the mail using SMTP.
       def net_smtp
-        Net::SMTP.start(config[:host], config[:port].to_i, config[:domain], 
+        Net::SMTP.start(config[:host], config[:port].to_i, config[:domain],
                         config[:user], config[:pass], config[:auth]) { |smtp|
-          smtp.send_message(@mail.to_s, @mail.from.first, @mail.to.to_s.split(/[,;]/))
+          smtp.send_message(@mail.to_s, @mail.from.first, @mail.to)
         }
       end
 
@@ -78,7 +78,7 @@ module Sinatra
       # ==== Raises
       # ArgumentError::
       #   file_or_files was not a File or an Array of File instances.
-      def attach(file_or_files, filename = file_or_files.is_a?(File) ? File.basename(file_or_files.path) : nil, 
+      def attach(file_or_files, filename = file_or_files.is_a?(File) ? File.basename(file_or_files.path) : nil,
         type = nil, headers = nil)
         if file_or_files.is_a?(Array)
           file_or_files.each {|k,v| @mail.add_attachment_as k, *v}
@@ -100,7 +100,7 @@ module Sinatra
 
     end
   end
-  
+
   class EventContext
     include Mailer
   end
